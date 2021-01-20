@@ -1,0 +1,28 @@
+<html>
+	<head>
+		<link rel="icon" href="https://james.chaosgb.co.uk/media/assert.png">
+		<title>Spotify</title>
+		<link rel="stylesheet" href="media/style.css">
+	</head>
+	<body>
+		<div class="box">
+			<h1>Spotify linking...</h1>
+			<button onclick="auth()">auth</button>
+		</div>
+		<script>
+			function auth(){
+				var win = open('/spotifyShorter','_blank');
+				win.focus();
+				let a = true;
+				while (a){
+					if (win.location.href==="https://assertapp.net/spotifyallgood"){
+						let a = false;
+					}
+					setTimeout(function(){},5000);
+				}
+				win.close();
+				window.href.location = "https://assertapp.net/";
+			}
+		</script>
+	</body>
+</html>
