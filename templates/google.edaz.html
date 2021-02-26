@@ -18,15 +18,6 @@
 			<h1>Sign in with Google</h1>
 			<nav>
 				<button
-					id="sign-out-button"
-					class="button"
-					href="#"
-					style="display: none"
-					onclick="signOut();"
-				>
-					Sign out of Google
-				</button>
-				<button
 					id="sign-in-button"
 					width="120"
 					height="36"
@@ -63,12 +54,6 @@
 			}
 
 			function onSignIn(googleUser) {
-				// Toggle button visability
-				document.getElementById("sign-out-button").style.display =
-					"block";
-				document.getElementById("sign-in-button").style.display =
-					"none";
-
 				//Main logic
 				var id_token = googleUser.getAuthResponse().id_token;
 				var xhr = new XMLHttpRequest();
@@ -96,11 +81,6 @@
 				var auth2 = gapi.auth2.getAuthInstance();
 				auth2.signOut().then(function () {
 					console.log("User signed out.");
-					// Toggle button visability
-					document.getElementById("sign-out-button").style.display =
-						"none";
-					document.getElementById("sign-in-button").style.display =
-						"block";
 				});
 			}
 		</script>
