@@ -1,49 +1,75 @@
 <html>
 	<head>
 		<title>Signin with Google</title>
-		<meta name="google-signin-client_id" content="157984761742-ikt4js20koafr9eb415ankqbc5nclpgv.apps.googleusercontent.com">
-		<link rel="stylesheet" href="/media/style.css">
+		<meta
+			name="google-signin-client_id"
+			content="157984761742-ikt4js20koafr9eb415ankqbc5nclpgv.apps.googleusercontent.com"
+		/>
+		<link rel="stylesheet" href="/media/style.css" />
 	</head>
 	<body>
 		<div class="box">
-	<script src="https://apis.google.com/js/client/platform.js?onload=init" async defer></script>
-	<script>
-		function init() {
-        		gapi.load('auth2', function() {
-	            		auth2 = gapi.auth2.init({
-		        	        client_id: '157984761742-ikt4js20koafr9eb415ankqbc5nclpgv.apps.googleusercontent.com',
-        		        	cookiepolicy: 'single_host_origin',
-	        		        scope: 'profile email'
-        			});
-	        		element = document.getElementById('glogin');
-  			      	auth2.attachClickHandler(element, {}, onSignIn, onFailure);
-	       		 })
-		}function onSignIn(googleUser){
-	    		var id_token = googleUser.getAuthResponse().id_token;
-			var xhr = new XMLHttpRequest();
-			xhr.open('POST', 'https://assertapp.net/googletoken?idtoken='+id_token);
-			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-			xhr.onload = function(){
-	 			if (xhr.responseText==="done"){
-					signOut();
-        	                	window.location.href = "https://assertapp.net/link/google?redir={{redir}}";
-	                        }else{
-					window.location.href = "https://assertapp.net/google?error=true"
+			<script
+				src="https://apis.google.com/js/client/platform.js?onload=init"
+				async
+				defer
+			></script>
+			<script>
+				function init() {
+					gapi.load("auth2", function () {
+						auth2 = gapi.auth2.init({
+							client_id:
+								"157984761742-ikt4js20koafr9eb415ankqbc5nclpgv.apps.googleusercontent.com",
+							cookiepolicy: "single_host_origin",
+							scope: "profile email"
+						});
+						element = document.getElementById("glogin");
+						auth2.attachClickHandler(
+							element,
+							{},
+							onSignIn,
+							onFailure
+						);
+					});
 				}
-			};
-			xhr.send();
-		}
-	</script>
-	<div class="g-signin2" data-onsuccess="onSignIn" data-prompt="select_account"></div>
-	<a href="#" onclick="signOut();">Sign out</a>
-	<script>
-  	function signOut() {
-    		var auth2 = gapi.auth2.getAuthInstance();
-    		auth2.signOut().then(function () {
-      		console.log('User signed out.');
-    		});
-  	}
-	</script>
+				function onSignIn(googleUser) {
+					var id_token = googleUser.getAuthResponse().id_token;
+					var xhr = new XMLHttpRequest();
+					xhr.open(
+						"POST",
+						"https://assertapp.net/googletoken?idtoken=" + id_token
+					);
+					xhr.setRequestHeader(
+						"Content-Type",
+						"application/x-www-form-urlencoded"
+					);
+					xhr.onload = function () {
+						if (xhr.responseText === "done") {
+							signOut();
+							window.location.href =
+								"https://assertapp.net/link/google?redir={{redir}}";
+						} else {
+							window.location.href =
+								"https://assertapp.net/google?error=true";
+						}
+					};
+					xhr.send();
+				}
+			</script>
+			<div
+				class="g-signin2"
+				data-onsuccess="onSignIn"
+				data-prompt="select_account"
+			></div>
+			<a href="#" onclick="signOut();">Sign out</a>
+			<script>
+				function signOut() {
+					var auth2 = gapi.auth2.getAuthInstance();
+					auth2.signOut().then(function () {
+						console.log("User signed out.");
+					});
+				}
+			</script>
 		</div>
 	</body>
 </html>

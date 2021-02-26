@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=0.86, maximum-scale=5.0, minimum-scale=0.86"
+		/>
+		<title>Signin with Google</title>
+		<meta
+			name="google-signin-client_id"
+			content="157984761742-ikt4js20koafr9eb415ankqbc5nclpgv.apps.googleusercontent.com"
+		/>
+		<link rel="stylesheet" href="/styles.edaz.css" />
+	</head>
+	<body>
+		<main>
+			<h1>Sign in with Google</h1>
+			<nav>
+				<button
+					id="sign-out-button"
+					class="button"
+					href="#"
+					style="display: none"
+					onclick="signOut();"
+				>
+					Sign out of Google
+				</button>
+				<button
+					id="sign-in-button"
+					width="120"
+					height="36"
+					class="g-signin2"
+					data-longtitle="true"
+					data-theme="dark"
+					data-onsuccess="onSignIn"
+					data-prompt="select_account"
+				>
+					Sign in with Google
+				</button>
+			</nav>
+		</main>
+		<script
+			src="https://apis.google.com/js/client/platform.js?onload=init"
+			async
+			defer
+		></script>
+		<script>
+			function init() {
+				gapi.load("auth2", function () {
+					auth2 = gapi.auth2.init({
+						client_id:
+							"157984761742-ikt4js20koafr9eb415ankqbc5nclpgv.apps.googleusercontent.com",
+						cookiepolicy: "single_host_origin",
+						scope: "profile email"
+					});
+					element = document.getElementById("glogin");
+					auth2.attachClickHandler(element, {}, onSignIn, onFailure);
+				});
+			}
+			function onFailure(error) {
+				console.warn(error);
+			}
+
+			function onSignIn(googleUser) {
+				// Toggle button visability
+				document.getElementById("sign-out-button").style.display =
+					"block";
+				document.getElementById("sign-in-button").style.display =
+					"none";
+
+				//Main logic
+				var id_token = googleUser.getAuthResponse().id_token;
+				var xhr = new XMLHttpRequest();
+				xhr.open(
+					"POST",
+					"https://assertapp.net/googletoken?idtoken=" + id_token
+				);
+				xhr.setRequestHeader(
+					"Content-Type",
+					"application/x-www-form-urlencoded"
+				);
+				xhr.onload = function () {
+					if (xhr.responseText === "done") {
+						signOut();
+						window.location.href =
+							"https://assertapp.net/link/google?redir={{redir}}";
+					} else {
+						window.location.href =
+							"https://assertapp.net/google?error=true";
+					}
+				};
+				xhr.send();
+			}
+			function signOut() {
+				var auth2 = gapi.auth2.getAuthInstance();
+				auth2.signOut().then(function () {
+					console.log("User signed out.");
+					// Toggle button visability
+					document.getElementById("sign-out-button").style.display =
+						"none";
+					document.getElementById("sign-in-button").style.display =
+						"block";
+				});
+			}
+		</script>
+	</body>
+</html>
