@@ -1,7 +1,7 @@
 <html>
 	<head>
 		<title>Signin with Google</title>
-		<meta name="google-signin-client_id" content="157984761742-ikt4js20koafr9eb415ankqbc5nclpgv.apps.googleusercontent.com">
+		<meta name="google-signin-client_id" content="{{googleClient}}.apps.googleusercontent.com">
 		<link rel="stylesheet" href="/media/style.css">
 	</head>
 	<body>
@@ -11,7 +11,7 @@
 		function init() {
         		gapi.load('auth2', function() {
 	            		auth2 = gapi.auth2.init({
-		        	        client_id: '157984761742-ikt4js20koafr9eb415ankqbc5nclpgv.apps.googleusercontent.com',
+		        	        client_id: '{{googleClient}}.apps.googleusercontent.com',
         		        	cookiepolicy: 'single_host_origin',
 	        		        scope: 'profile email'
         			});
@@ -21,21 +21,30 @@
 		}function onSignIn(googleUser){
 	    		var id_token = googleUser.getAuthResponse().id_token;
 			var xhr = new XMLHttpRequest();
-			xhr.open('POST', 'https://assertapp.net/googletoken?idtoken='+id_token);
+			xhr.open('POST', '/googletoken?idtoken='+id_token);
 			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
 			xhr.onload = function(){
+				{% if link %}
 	 			if (xhr.responseText==="done"){
 					signOut();
-        	                	window.location.href = "https://assertapp.net/link/google?redir={{redir}}";
+        	                	window.location.href = "/split/google?link=true&redir={{redir}}";
 	                        }else{
-					window.location.href = "https://assertapp.net/google?error=true"
+					window.location.href = "/google?link=true&error=true"
 				}
+				{% endif %}
+				{% if not link %}
+				if (xhr.responseText==="done"){
+                                        signOut();
+                                        window.location.href = "/split/google?redir={{redir}}";
+                                }else{
+                                        window.location.href = "/google?error=true"
+                                }
+				{% endif %}
 			};
 			xhr.send();
 		}
 	</script>
 	<div class="g-signin2" data-onsuccess="onSignIn" data-prompt="select_account"></div>
-	<a href="#" onclick="signOut();">Sign out</a>
 	<script>
   	function signOut() {
     		var auth2 = gapi.auth2.getAuthInstance();

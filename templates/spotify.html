@@ -1,27 +1,25 @@
 <html>
 	<head>
-		<link rel="icon" href="https://james.chaosgb.co.uk/media/assert.png">
+		<link rel="icon" href="/media/logo.png">
 		<title>Spotify</title>
 		<link rel="stylesheet" href="media/style.css">
 	</head>
 	<body>
 		<div class="box">
 			<h1>Spotify linking...</h1>
-			<button onclick="auth()">auth</button>
+			<button onclick="auth()" id="auth">Click to authenticate</button>
+			{% if link %}
+			<a href="/split/spotify?link=true&redir={{redir}}"><button style="display: none;" id="continue">Continue</button></a>
+			{% endif %}
+			{% if not link %}
+                        <a href="/split/spotify?link=false&redir={{redir}}"><button style="display: none;" id="continue">Continue</button></a>
+            {% endif %}
 		</div>
 		<script>
 			function auth(){
-				var win = open('/spotifyShorter','_blank');
-				win.focus();
-				let a = true;
-				while (a){
-					if (win.location.href==="https://assertapp.net/spotifyallgood"){
-						let a = false;
-					}
-					setTimeout(function(){},5000);
-				}
-				win.close();
-				window.href.location = "https://assertapp.net/";
+				open('/spotifyShorter','_blank');
+				document.getElementById("continue").setAttribute("style","");
+				document.getElementById("auth").setAttribute("style","display: None")
 			}
 		</script>
 	</body>
