@@ -1,34 +1,41 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 	<head>
+		<meta charset="utf-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=0.86, maximum-scale=5.0, minimum-scale=0.86"
+		/>
 		<title>Assert</title>
-		<link rel="icon" href="/media/assert.png">
-		<link rel="stylesheet" href="/media/style.css">
+		<link rel="icon" href="media/logo.png" />
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content="https://assertapp.net/" />
+		<meta property="og:title" content="Assert" />
+		<meta property="og:description" content="A quick signin provider" />
+		<link rel="icon" href="/media/logo.png" />
+		<link rel="stylesheet" href="/media/style.css" />
 	</head>
 	<body>
-		<div class="box">
+		<main>
 			<h1>Choose your signin choice</h1>
-			<p>We currently have Google. Spotify is a WIP. Do not use it. Seriously. I mean it. Like, don't be surprised to see "Error 500" if you try and click on it. UPDATE: Apache restarted overnight and its here. If you have an issue, email james@chaosgb.co.uk.</p>
-			{% if link %}
-				{% if not serv=='google' %}
-					<a href="/google?link=true&redir={{redir}}">
-						<button>Google</button>
-					</a>
+			<nav>
+				{% if link %}
+					{% if not serv=='google' %}
+					<a class="button" href="/google?link=true&redir={{redir}}"> Google </a>
+					{% endif %}
+					{% if not serv=='spotify' %}
+					<a class="button" href="/spotify?link=true&redir={{redir}}"> Spotify </a>
+					{% endif %}
 				{% endif %}
-				{% if not serv=='spotify' %}
-					<a href="/spotify?link=true&redir={{redir}}">
-						<button>Spotify</button>
-					</a>
+				{% if not link %}
+					{% if not serv=='google' %}
+					<a class="button" href="/google?link=false&redir={{redir}}"> Google </a>
+					{% endif %}
+					{% if not serv=='spotify' %}
+					<a class="button" href="/spotify?link=false&redir={{redir}}"> Spotify </a>
+					{% endif %}
 				{% endif %}
-			{% endif %}
-			{% if not link %}
-				<a href="/google?link=false&redir={{redir}}">
-					<button>Google</button>
-				</a>
-				<br>
-				<a href="/spotify?link=false&redir={{redir}}">
-					<button>Spotify</button>
-				</a>
-			{% endif %}
-		</div>
+			</nav>
+		</main>
 	</body>
 </html>

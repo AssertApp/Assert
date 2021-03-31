@@ -1,58 +1,107 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 	<head>
+		<meta charset="utf-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=0.86, maximum-scale=5.0, minimum-scale=0.86"/>
 		<title>Signin with Google</title>
-		<meta name="google-signin-client_id" content="{{googleClient}}.apps.googleusercontent.com">
-		<link rel="stylesheet" href="/media/style.css">
+
+		<link rel="icon" href="/media/logo.png" />
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content="{{siteurl}}/" />
+		<meta property="og:title" content="Assert" />
+		<meta property="og:description" content="A quick signin provider" />
+		<link rel="icon" href="/media/logo.png" />
+		<link rel="stylesheet" href="/media/style.css" />
+
+		<meta
+			name="google-signin-client_id"
+			content="{{googleClient}}.apps.googleusercontent.com"
+		/>
 	</head>
 	<body>
-		<div class="box">
-	<script src="https://apis.google.com/js/client/platform.js?onload=init" async defer></script>
-	<script>
-		function init() {
-        		gapi.load('auth2', function() {
-	            		auth2 = gapi.auth2.init({
-		        	        client_id: '{{googleClient}}.apps.googleusercontent.com',
-        		        	cookiepolicy: 'single_host_origin',
-	        		        scope: 'profile email'
-        			});
-	        		element = document.getElementById('glogin');
-  			      	auth2.attachClickHandler(element, {}, onSignIn, onFailure);
-	       		 })
-		}function onSignIn(googleUser){
-	    		var id_token = googleUser.getAuthResponse().id_token;
-			var xhr = new XMLHttpRequest();
-			xhr.open('POST', '/googletoken?idtoken='+id_token);
-			xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-			xhr.onload = function(){
-				{% if link %}
-	 			if (xhr.responseText==="done"){
-					signOut();
-        	                	window.location.href = "/split/google?link=true&redir={{redir}}";
-	                        }else{
-					window.location.href = "/google?link=true&error=true"
-				}
-				{% endif %}
-				{% if not link %}
-				if (xhr.responseText==="done"){
-                                        signOut();
-                                        window.location.href = "/split/google?redir={{redir}}";
-                                }else{
-                                        window.location.href = "/google?error=true"
-                                }
-				{% endif %}
-			};
-			xhr.send();
-		}
-	</script>
-	<div class="g-signin2" data-onsuccess="onSignIn" data-prompt="select_account"></div>
-	<script>
-  	function signOut() {
-    		var auth2 = gapi.auth2.getAuthInstance();
-    		auth2.signOut().then(function () {
-      		console.log('User signed out.');
-    		});
-  	}
-	</script>
-		</div>
+		<main>
+			<h1>Sign in with Google</h1>
+			<nav>
+				<button
+					id="sign-in-button"
+					width="120"
+					height="36"
+					class="g-signin2"
+					data-longtitle="true"
+					data-theme="dark"
+					data-onsuccess="onSignIn"
+					data-prompt="select_account"
+				>
+					Sign in with Google
+				</button>
+			</nav>
+		</main>
+		<script
+			src="https://apis.google.com/js/client/platform.js?onload=init"
+			async
+			defer
+		></script>
+		<script>
+			function init() {
+				gapi.load("auth2", function () {
+					auth2 = gapi.auth2.init({
+						client_id:
+							"{{googleClient}}.apps.googleusercontent.com",
+						cookiepolicy: "single_host_origin",
+						scope: "profile email"
+					});
+					element = document.getElementById("glogin");
+					auth2.attachClickHandler(element, {}, onSignIn, onFailure);
+				});
+			}
+			function onFailure(error) {
+				console.warn(error);
+			}
+
+			function onSignIn(googleUser) {
+				//Main logic
+				var id_token = googleUser.getAuthResponse().id_token;
+				var xhr = new XMLHttpRequest();
+				xhr.open(
+					"POST",
+					"{{siteurl}}/googletoken?idtoken=" + id_token
+				);
+				xhr.setRequestHeader(
+					"Content-Type",
+					"application/x-www-form-urlencoded"
+				);
+				xhr.onload = function () {
+					{% if link %}
+					if (xhr.responseText === "done") {
+						signOut();
+						window.location.href =
+							"{{siteurl}}/split/google?link=true&redir={{redir}}";
+					} else {
+						window.location.href =
+							"{{siteurl}}/google?link=true&error=true";
+					}
+					{% endif %}
+					{% if not link %}
+					if (xhr.responseText === "done") {
+						signOut();
+						window.location.href =
+							"{{siteurl}}/split/google?redir={{redir}}";
+					} else {
+						window.location.href =
+							"{{siteurl}}/google?error=true";
+					}
+					{% endif %}
+				};
+				xhr.send();
+			}
+			function signOut() {
+				var auth2 = gapi.auth2.getAuthInstance();
+				auth2.signOut().then(function () {
+					console.log("User signed out.");
+				});
+			}
+		</script>
 	</body>
 </html>

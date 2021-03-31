@@ -5,7 +5,7 @@ from google.oauth2 import id_token
 from google.auth.transport import requests as gRequests
 from jwcrypto import jwt, jwk
 from itsdangerous import URLSafeSerializer
-from components import percentEncode, genToken, getCookieWithExpiry
+from .components import percentEncode, genToken, getCookieWithExpiry
 #from flask_session import Session  # https://pythonhosted.org/Flask-Session
 #import msal
 #import app_config
@@ -13,7 +13,7 @@ from components import percentEncode, genToken, getCookieWithExpiry
 
 app=Flask(__name__, static_folder='static', static_url_path='/media')
 
-x = open('components/secrets.json','r')
+x = open('/var/www/assert/assertapp/components/secrets.json','r')
 data = json.loads(x.read())
 x.close()
 site_url = data["site_url"]
@@ -87,8 +87,8 @@ def google(link, redir):
         session['linkID']=json.dumps(val)
     if link and link=="false":
         link = False
-    return render_template('google.html', redir=redir, link=link, googleClient=googleClient)
-
+    return render_template('google.html', redir=redir, link=link, googleClient=googleClient, siteURL=site_url)
+    
 #actual verification of /google
 @app.route('/googletoken', defaults={'idtoken': None}, methods=['POST'])
 @app.route('/googletoken/<idtoken>')
@@ -361,7 +361,7 @@ def spotifyAuth(code):
     jsondata = getCookieWithExpiry(json.loads(y.text)["id"])
     while not 'spotifyID' in session or not session['spotifyID']==jsondata:
         session['spotifyID']=jsondata
-    return """<link rel="stylesheet" href="/media/style.css"><div class="box"><h1>You can now close this tab</h1></div>"""
+    return """<link rel="stylesheet" href="/media/style.css"><main><h1>You can now close this tab</h1></main>"""
 
 @app.route('/git/')
 def git():

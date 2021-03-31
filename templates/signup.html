@@ -1,17 +1,36 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 	<head>
+		<meta charset="utf-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=0.86, maximum-scale=5.0, minimum-scale=0.86"
+		/>
 		<title>Signup or Link</title>
-		<link rel="icon" href="/media/logo.png">
-		<link rel="stylesheet" href="/media/style.css">
+
+		<link rel="icon" href="/media/logo.png" />
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content="https://assertapp.net/" />
+		<meta property="og:title" content="Assert" />
+		<meta property="og:description" content="A quick signin provider" />
+		<link rel="stylesheet" href="/media/style.css" />
 	</head>
 	<body>
-		<div class="box">
+		<main>
 			<h1>Signup or Link?</h1>
-			<p>If you've never used Assert before, signup. If you have, link.</p>
-			<a href="/signup/{{serv}}?redir={{redir}}">
-				<button id="signup">Signup</button>
-				<label for="signup">By signing up, you agree to the <a href="/tos" target="_blank">Terms of Service</a> and the <a href="/privacy" target="_blank">Privacy Policy</a></label>
-			</a>
-		</div>
+			<p>
+				If you've never used Assert before, signup. If you have, link.
+			</p>
+			<nav>
+				<a class="button" href="/signup/{{serv}}?redir={{redir}}">Signup</a>
+				<a class="button" href="/link/{{serv}}?redir={{redir}}">Link</a>
+			</nav>
+			<footer>
+				By signing up, you agree to the
+				<a class="link" href="/tos" target="_blank">Terms of Service</a>
+				and the
+				<a class="link" href="/privacy" target="_blank">Privacy Policy</a>
+			</footer>
+		</main>
 	</body>
 </html>

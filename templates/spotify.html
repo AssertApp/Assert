@@ -5,19 +5,26 @@
 		<link rel="stylesheet" href="media/style.css">
 	</head>
 	<body>
-		<div class="box">
+		<main>
 			<h1>Spotify linking...</h1>
-			<button onclick="auth()" id="auth">Click to authenticate</button>
+			<nav>
+				<a class="button" href="/spotifyShorter" target="_blank" id="auth" onclick="auth()">
+					Authenticate
+				</a>
 			{% if link %}
-			<a href="/split/spotify?link=true&redir={{redir}}"><button style="display: none;" id="continue">Continue</button></a>
+			<a href="/split/spotify?link=true&redir={{redir}}" class="button" id="continue" style="display: none">
+				Continue
+			</a>
 			{% endif %}
 			{% if not link %}
-                        <a href="/split/spotify?link=false&redir={{redir}}"><button style="display: none;" id="continue">Continue</button></a>
-            {% endif %}
-		</div>
+				<a href="/split/spotify?link=false&redir={{redir}}" class="button" id="continue" style="display: none">
+					Continue
+				</a>
+	            	{% endif %}
+	    		</nav>
+		</main>
 		<script>
 			function auth(){
-				open('/spotifyShorter','_blank');
 				document.getElementById("continue").setAttribute("style","");
 				document.getElementById("auth").setAttribute("style","display: None")
 			}
