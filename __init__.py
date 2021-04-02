@@ -217,9 +217,9 @@ def tokenAuth(redir):
     x = safeEncrypt(json)
     return redirect(f'{redir}?token={x}')
 
-@app.route('/verify', defaults={"redir": None, "token": None}, methods=['POST'])
-@app.route('/verify/<redir><token>')
-def verify(redir,token):
+@app.route('/verify', defaults={"token": None, "redir": None}, methods=['POST'])
+@app.route('/verify/<token><redir>')
+def verify(token,redir):
     if not redir:
         redir=request.args.get('redir')
     if not token:
