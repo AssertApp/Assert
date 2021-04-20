@@ -19,22 +19,24 @@
 		<main>
 			<h1>Choose your signin choice</h1>
 			<nav>
-				{% if link %}
-					{% if not serv=='google' %}
-					<a class="button" href="/google?link=true&redir={{redir}}"> Google </a>
-					{% endif %}
-					{% if not serv=='spotify' %}
-					<a class="button" href="/spotify?link=true&redir={{redir}}"> Spotify </a>
-					{% endif %}
-				{% endif %}
-				{% if not link %}
-					{% if not serv=='google' %}
-					<a class="button" href="/google?link=false&redir={{redir}}"> Google </a>
-					{% endif %}
-					{% if not serv=='spotify' %}
-					<a class="button" href="/spotify?link=false&redir={{redir}}"> Spotify </a>
-					{% endif %}
-				{% endif %}
+				{% if link %} {% if not serv=='google' %}
+				<a class="button" href="/google?link=true&redir={{redir}}">
+					Google
+				</a>
+				{% endif %} {% if not serv=='spotify' %}
+				<a class="button" href="/spotify?link=true&redir={{redir}}">
+					Spotify
+				</a>
+				{% endif %} {% endif %} {% if not link %} {% if not
+				serv=='google' %}
+				<a class="button" href="/google?link=false&redir={{redir}}">
+					Google
+				</a>
+				{% endif %} {% if not serv=='spotify' %}
+				<a class="button" href="/spotify?link=false&redir={{redir}}">
+					Spotify
+				</a>
+				{% endif %} {% endif %}
 			</nav>
 		</main>
 	</body>

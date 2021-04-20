@@ -59,7 +59,8 @@ def auth(redir):
     if not redir:
         redir=request.args.get('redir')
     if not redir:
-        return "That's an error! Redirect was not specified in the URL. If you are developing a web app and you saw this, remember to specify redirect. Otherwise, sorry!"
+        return render_template('error.html', error="That's an error! Redirect was not specified in the URL. If you are developing a web app and you saw this, remember to specify redirect. Otherwise, sorry!")
+        
     if 'linkID' in session:
         session.pop('linkID')
     return render_template("choice.html", redir=redir)
@@ -71,7 +72,7 @@ def google(link, redir):
     if not redir:
         redir=request.args.get('redir')
     if not redir:
-        return "No redirect was specified. That's an error."
+        return render_template('error.html', error="No redirect was specified. That's an error.")
     if not link:
         link = request.args.get('link')
     if not link:
@@ -102,7 +103,7 @@ def getId(idtoken):
             session['googleID']=jsondata
         return 'done'
     except:
-        return 'error'
+        return render_template('error.html', error='error')
 
 #checks if user exists, where the path splits into login and signup
 @app.route('/split/google', defaults={'link': None, 'redir': None})
@@ -111,7 +112,7 @@ def googleAcc(link, redir):
     if not redir:
         redir=request.args.get('redir')
     if not redir:
-        return "That's an error! Redirect was not specified in the URL, but that should have been caught. Sorry!"
+        return render_template('error.html', error="That's an error! Redirect was not specified in the URL, but that should have been caught. Sorry!")
     if not link:
         link = request.args.get('link')
     if not link:
@@ -133,9 +134,9 @@ def googleAcc(link, redir):
             validToken = True
         else:
             session.pop('googleID')
-            return "invalid token"
+            return render_template('error.html', error="invalid token")
     else:
-        return "You have not signed in with your Google account"
+        return render_template('error.html', error="You have not signed in with your Google account")
     try:
         session['id']=googleResults[0][2]
         #possibly not perfect but cba
@@ -205,7 +206,7 @@ def tokenAuth(redir):
     if not redir:
         redir=request.args.get('redir')
     if not redir:
-        return "Ok, I see what you did, user. Well it doesn't work."
+        return render_template('error.html', error="Ok, I see what you did, user. Well it doesn't work.")
     uuid=session['id']
     theTime=math.floor(time.time())+60
     json = {
@@ -225,14 +226,14 @@ def verify(token,redir):
     if not token:
         token=request.args.get('token')
     if not redir:
-        return "Error. Redir was not specified."
+        return render_template('error.html', error="Error. Redir was not specified.")
     if not token:
-        return "Error. Token was not specified."
+        return render_template('error.html', error="Error. Token was not specified.")
     #decryption
     claims = safeDecrypt(token)
     theTime = math.floor(time.time())
     if theTime > claims["iat"] or not claims["redir"]==redir:
-        return "The token is invalid"
+        return render_template('error.html', error="The token is invalid")
     else:
         return claims["sub"]
 
@@ -242,16 +243,16 @@ def signup(redir):
     if not redir:
         redir=request.args.get('redir')
     if not redir:
-        return "Redirect was not specified. I have no idea how this happened unless it was YOU, the user, that intentionally went here!"
+        return render_template('error.html', error="Redirect was not specified. I have no idea how this happened unless it was YOU, the user, that intentionally went here!")
     if not "googleID" in session:
-        return "Not sure if this error is on your behalf or mine, but it happened."
+        return render_template('error.html', error="Not sure if this error is on your behalf or mine, but it happened.")
     try:
         googID = session["googleID"]
         gID = json.loads(googID)
     except:
         return session["googleID"]
     if int(gID["expires"])<math.floor(time.time()):
-        return "The session is now invalid. Who says so? My code's safety measures say so!"
+        return render_template('error.html', error="The session is now invalid. Who says so? My code's safety measures say so!")
     GoogleID = gID["id"]
     conn=database()
     cur=conn.cursor()
@@ -259,7 +260,7 @@ def signup(redir):
     results=cur.fetchall()
     try:
         if results[0][2]:
-            return "Nice try"
+            return render_template('error.html', error="Nice try")
     except:
         done = False
     while not done:
@@ -328,7 +329,7 @@ def spotify(link, redir):
     if not redir:
         redir=request.args.get('redir')
     if not redir:
-        return "That's an error"
+        return render_template('error.html', error="That's an error")
     if not link:
         link = request.args.get('link')
     if not link:
@@ -339,11 +340,11 @@ def spotify(link, redir):
             val = json.loads(session['linkID'])
             if val["service"]=="spotify":
                 session.pop('linkID')
-                return "Confusion"
+                return render_template('error.html', error="Confusion")
             val["service2"]="spotify"
             session['linkID']=json.dumps(val)
         else:
-            return "I am very, very confused"
+            return render_template('error.html', error="I am very confused")
     if link and link=="false":
         link = False
     return render_template('spotify.html', redir=redir, link=link)
@@ -354,14 +355,14 @@ def spotifyAuth(code):
     if not code:
         code=request.args.get('code')
     if not code:
-        return "If you're trying to get an error 500, look somewhere else. I'm not THAT bad at coding!"
+        render_template('error.html', error="If you're trying to get an error 500, look somewhere else. I'm not THAT bad at coding!")
     x = requests.post('https://accounts.spotify.com/api/token', data={"grant_type": "authorization_code","code": code, "redirect_uri": f"{site_url}/spotifyAuth", "client_id": spotifyClient, "client_secret": spotifySecret, "ContentType:": "application/x-www-form-urlencoded"})
     token = json.loads(x.text)["access_token"]
     y = requests.get('https://api.spotify.com/v1/me', headers={"Authorization": f"Bearer {token}"})
     jsondata = getCookieWithExpiry(json.loads(y.text)["id"])
     while not 'spotifyID' in session or not session['spotifyID']==jsondata:
         session['spotifyID']=jsondata
-    return """<link rel="stylesheet" href="/media/style.css"><main><h1>You can now close this tab</h1></main>"""
+    return render_template("close.html")
 
 @app.route('/git/')
 def git():
@@ -374,7 +375,7 @@ def spotifyAcc(link, redir):
     if not redir:
         redir=request.args.get('redir')
     if not redir:
-        return "That's an error! Redirect was not specified in the URL, but that should have been caught. Sorry!"
+        return render_template('error.html', error="That's an error! Redirect was not specified in the URL, but that should have been caught. Sorry!")
     if not link:
         link = request.args.get('link')
     if not link:
@@ -395,9 +396,9 @@ def spotifyAcc(link, redir):
             spotifyResults=cur.fetchall()
             validToken = True
         else:
-            return "invalid token"
+            return render_template('error.html', error="invalid token")
     else:
-        return "You have not signed in with your Spotify account"
+        return render_template('error.html', error="You have not signed in with your Spotify account")
     try:
         session['id']=spotifyResults[0][2]
         #possibly not perfect but cba
@@ -411,7 +412,7 @@ def confirmLink(redir):
     if not redir:
         redir = request.args.get('redir')
     if not redir:
-        return "Redir was not specified in the URL"
+        return render_template('error.html', error="Redir was not specified in the URL")
     if 'linkID' in session:
         val = json.loads(session['linkID'])
         if val["expiry"]>math.floor(time.time()):
@@ -423,14 +424,14 @@ def confirmLink(redir):
                 if 'googleID' in session:
                     google = json.loads(session["googleID"])
                     if google["expires"]<math.floor(time.time()):
-                        return "This took too long and we cannot verify the authenticity of this request"
+                        return render_template('error.html', error="This took too long and we cannot verify the authenticity of this request")
                     gID = google["id"]
                     conn = database()
                     cur=conn.cursor()
                     cur.execute(f"select google from users where google='{gID}';")
                     try:
                         if not cur.fetchall()[0][0]==gID:
-                            return "error"
+                            return render_template('error.html', error="error")
                     except:
                         numberone = {"service": "google","id": gID}
                 else:
@@ -439,14 +440,14 @@ def confirmLink(redir):
                 if 'spotifyID' in session:
                     spotify = json.loads(session["spotifyID"])
                     if spotify["expires"]<math.floor(time.time()):
-                        return "This took too long and we cannot verify the authenticity of this request"
+                        return render_template('error.html', error="This took too long and we cannot verify the authenticity of this request")
                     sID = spotify["id"]
                     conn = database()
                     cur = conn.cursor()
                     cur.execute(f"select spotify from users where spotify='{sID}';")
                     try:
                         if not cur.fetchall()[0][0]==sID:
-                            return "error"
+                            return render_template('error.html', error="error")
                     except:
                         numberone = {"service": "spotify","id": sID}
                 else:
@@ -455,32 +456,32 @@ def confirmLink(redir):
                 if 'googleID' in session:
                     google = json.loads(session["googleID"])
                     if google["expires"]<math.floor(time.time()):
-                        return "This took too long and we cannot verify the authenticity of this request"
+                        return render_template('error.html', error="This took too long and we cannot verify the authenticity of this request")
                     gID = google["id"]
                     conn = database()
                     cur = conn.cursor()
                     cur.execute(f"select google from users where google='{gID}';")
                     if not cur.fetchall()[0][0]==gID:
-                        return "error"
+                        return render_template('error.html', error="error")
                     numbertwo = {"service": "google","id": gID}
                 else:
-                    return "invalid"
+                    return render_template('error.html', error="invalid")
             elif service2=="spotify":
                 if 'spotifyID' in session:
                     spotify = json.loads(session["spotifyID"])
                     if spotify["expires"]<math.floor(time.time()):
-                        return "This took too long and we cannot verify the authenticity of this request"
+                        return render_template('error.html', error="This took too long and we cannot verify the authenticity of this request")
                     sID = spotify["id"]
                     conn = database()
                     cur = conn.cursor()
                     cur.execute(f"select spotify from users where spotify='{sID}';")
                     if not cur.fetchall()[0][0]==sID:
-                        return "error"
+                        return render_template('error.html', error="error")
                     numbertwo = {"service": "spotify","id": sID}
                 else:
                     return "invalid"
             if not service1=="google" and not service1=="spotify" and not service2=="google" and not service2=="spotify":
-                return "If this error occurs, email James at james@chaosgb.co.uk. This should not happen, so if you see this, please tell me!"
+                returnrender_template('error.html', error= "If this error occurs, email James at james@chaosgb.co.uk. This should not happen, so if you see this, please tell me!")
             session.pop('linkID')
             return render_template("confirmlink.html", code=safeEncrypt({"tolink": numberone, "exists": numbertwo, "expires": math.floor(time.time()+60)}), redir=redir)
         else:
@@ -495,10 +496,10 @@ def confirmedlink(code, redir):
     code = request.args.get('code')
     redir = request.args.get('redir')
     if not code or not redir:
-        return "error"
+        return render_template('error.html', error="error")
     code = safeDecrypt(code)
     if code["expires"]<math.floor(time.time()):
-        return "This took too long and we cannot verify the authenticity of this request"
+        return render_template('error.html', error="This took too long and we cannot verify the authenticity of this request")
     existing = code["exists"]
     existingService = existing["service"]
     existingID = existing["id"]
@@ -509,20 +510,20 @@ def confirmedlink(code, redir):
     conn = database()
     cur = conn.cursor()
     if existingService==toLinkService:
-        return "Error"
+        return render_template('error.html', error="Error")
     if not existingService in validServices or not toLinkService in validServices:
-        return "Error"
+        return render_template('error.html', error="Error")
     cur.execute(f"select {toLinkService} from users where {existingService}='{existingID}';")
     results = cur.fetchall()
     try:
         assert results[0][0]
-        return "Error"
+        return render_template('error.html', error="Error")
     except:
         cur.execute(f"select {existingService} from users where {toLinkService}='{toLinkID}';")
     results = cur.fetchall()
     try:
         assert results[0][0]
-        return "Error"
+        return render_template('error.html', error="Error")
     except:
         cur.execute(f"select id from users where {existingService}='{existingID}';")
     ID = cur.fetchall()[0][0]
@@ -533,4 +534,7 @@ def confirmedlink(code, redir):
     return redirect(f'/tokenAuth?redir={redir}')
 
 if __name__=='__main__':
-    app.run()
+    try:
+        app.run()
+    except KeyboardInterrupt:
+        print("😳 UwU James fix the webhook bug")
