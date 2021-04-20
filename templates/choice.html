@@ -7,44 +7,37 @@
 			content="width=device-width, initial-scale=0.86, maximum-scale=5.0, minimum-scale=0.86"
 		/>
 		<title>Assert</title>
-		<link rel="icon" href="https://james.chaosgb.co.uk/media/assert.png" />
+		<link rel="icon" href="media/logo.png" />
 		<meta property="og:type" content="website" />
 		<meta property="og:url" content="https://assertapp.net/" />
 		<meta property="og:title" content="Assert" />
 		<meta property="og:description" content="A quick signin provider" />
-		<link rel="icon" href="https://james.chaosgb.co.uk/media/assert.png" />
-		<link rel="stylesheet" href="/media/styles.css" />
+		<link rel="icon" href="/media/logo.png" />
+		<link rel="stylesheet" href="/media/style.css" />
 	</head>
 	<body>
 		<main>
 			<h1>Choose your signin choice</h1>
 			<nav>
-				<a class="button" href="/google?redir={{redir}}"> Google </a>
-				<a
-					class="button"
-					href="/spotify?redir={{redir}}"
-					onclick="alert('You stupid person');"
-				>
+				{% if link %} {% if not serv=='google' %}
+				<a class="button" href="/google?link=true&redir={{redir}}">
+					Google
+				</a>
+				{% endif %} {% if not serv=='spotify' %}
+				<a class="button" href="/spotify?link=true&redir={{redir}}">
 					Spotify
 				</a>
+				{% endif %} {% endif %} {% if not link %} {% if not
+				serv=='google' %}
+				<a class="button" href="/google?link=false&redir={{redir}}">
+					Google
+				</a>
+				{% endif %} {% if not serv=='spotify' %}
+				<a class="button" href="/spotify?link=false&redir={{redir}}">
+					Spotify
+				</a>
+				{% endif %} {% endif %}
 			</nav>
-			<footer>
-				<p>
-					We currently have Google. Spotify is a WIP. Do not use it.
-					Seriously. I mean it. Like, don't be surprised to see "Error
-					500" if you try and click on it.
-					<br /><br />
-
-					<strong>UPDATE</strong>: Apache restarted overnight and its
-					here. If you have an issue, email
-					<a
-						class="link"
-						href="mailto:james@chaosgb.co.uk"
-						target="_blank"
-						>james@chaosgb.co.uk</a
-					>.
-				</p>
-			</footer>
 		</main>
 	</body>
 </html>

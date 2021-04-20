@@ -8,17 +8,17 @@
 		/>
 		<title>Signin with Google</title>
 
-		<link rel="icon" href="https://james.chaosgb.co.uk/media/assert.png" />
+		<link rel="icon" href="/media/logo.png" />
 		<meta property="og:type" content="website" />
-		<meta property="og:url" content="https://assertapp.net/" />
+		<meta property="og:url" content="{{siteurl}}/" />
 		<meta property="og:title" content="Assert" />
 		<meta property="og:description" content="A quick signin provider" />
-		<link rel="icon" href="https://james.chaosgb.co.uk/media/assert.png" />
-		<link rel="stylesheet" href="/media/styles.css" />
+		<link rel="icon" href="/media/logo.png" />
+		<link rel="stylesheet" href="/media/style.css" />
 
 		<meta
 			name="google-signin-client_id"
-			content="157984761742-ikt4js20koafr9eb415ankqbc5nclpgv.apps.googleusercontent.com"
+			content="{{googleClient}}.apps.googleusercontent.com"
 		/>
 	</head>
 	<body>
@@ -49,7 +49,7 @@
 				gapi.load("auth2", function () {
 					auth2 = gapi.auth2.init({
 						client_id:
-							"157984761742-ikt4js20koafr9eb415ankqbc5nclpgv.apps.googleusercontent.com",
+							"{{googleClient}}.apps.googleusercontent.com",
 						cookiepolicy: "single_host_origin",
 						scope: "profile email"
 					});
@@ -67,21 +67,33 @@
 				var xhr = new XMLHttpRequest();
 				xhr.open(
 					"POST",
-					"https://assertapp.net/googletoken?idtoken=" + id_token
+					"{{siteurl}}/googletoken?idtoken=" + id_token
 				);
 				xhr.setRequestHeader(
 					"Content-Type",
 					"application/x-www-form-urlencoded"
 				);
 				xhr.onload = function () {
+					{% if link %}
 					if (xhr.responseText === "done") {
 						signOut();
 						window.location.href =
-							"https://assertapp.net/link/google?redir={{redir}}";
+							"{{siteurl}}/split/google?link=true&redir={{redir}}";
 					} else {
 						window.location.href =
-							"https://assertapp.net/google?error=true";
+							"{{siteurl}}/google?link=true&error=true";
 					}
+					{% endif %}
+					{% if not link %}
+					if (xhr.responseText === "done") {
+						signOut();
+						window.location.href =
+							"{{siteurl}}/split/google?redir={{redir}}";
+					} else {
+						window.location.href =
+							"{{siteurl}}/google?error=true";
+					}
+					{% endif %}
 				};
 				xhr.send();
 			}
