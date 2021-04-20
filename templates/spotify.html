@@ -6,41 +6,58 @@
 			name="viewport"
 			content="width=device-width, initial-scale=0.86, maximum-scale=5.0, minimum-scale=0.86"
 		/>
+
+		<link rel="icon" href="/media/logo.png" />
+
 		<title>Spotify</title>
 
-		<link rel="icon" href="https://james.chaosgb.co.uk/media/assert.png" />
 		<meta property="og:type" content="website" />
 		<meta property="og:url" content="https://assertapp.net/" />
 		<meta property="og:title" content="Assert" />
 		<meta property="og:description" content="A quick signin provider" />
-		<link rel="icon" href="https://james.chaosgb.co.uk/media/assert.png" />
+
 		<link rel="stylesheet" href="/media/styles.css" />
 	</head>
 	<body>
 		<main>
-			<h1>Sign in with Spotify</h1>
+			<h1>Spotify linking...</h1>
 			<nav>
-				<button class="button" onclick="auth()">
-					Sign in with Spotify
-				</button>
+				<a
+					class="button"
+					href="/spotifyShorter"
+					target="_blank"
+					id="auth"
+					onclick="auth()"
+				>
+					Authenticate
+				</a>
+				{% if link %}
+				<a
+					href="/split/spotify?link=true&redir={{redir}}"
+					class="button"
+					id="continue"
+					style="display: none"
+				>
+					Continue
+				</a>
+				{% endif %} {% if not link %}
+				<a
+					href="/split/spotify?link=false&redir={{redir}}"
+					class="button"
+					id="continue"
+					style="display: none"
+				>
+					Continue
+				</a>
+				{% endif %}
 			</nav>
 		</main>
 		<script>
 			function auth() {
-				var win = open("/spotifyShorter", "_blank");
-				win.focus();
-				let a = true;
-				while (a) {
-					if (
-						win.location.href ===
-						"https://assertapp.net/spotifyallgood"
-					) {
-						let a = false;
-					}
-					setTimeout(function () {}, 5000);
-				}
-				win.close();
-				window.href.location = "https://assertapp.net/";
+				document.getElementById("continue").setAttribute("style", "");
+				document
+					.getElementById("auth")
+					.setAttribute("style", "display: None");
 			}
 		</script>
 	</body>
