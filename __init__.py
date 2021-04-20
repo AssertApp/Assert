@@ -54,7 +54,7 @@ def auth(redir):
     if not redir:
         redir=request.args.get('redir')
     if not redir:
-        return "That's an error! Redirect was not specified in the URL. If you are developing a web app and you saw this, remember to specify redirect. Otherwise, sorry!"
+        return render_template('error.html', error="That's an error! Redirect was not specified in the URL. If you are developing a web app and you saw this, remember to specify redirect. Otherwise, sorry!")
     return render_template("choice.html", redir=redir)
 
 #gets google id
@@ -64,7 +64,7 @@ def google(redir):
     if not redir:
         redir=request.args.get('redir')
     if not redir:
-        return "No redirect was specified. That's an error."
+        return render_template('error.html', error="No redirect was specified. That's an error.")
     return render_template('google.html', redir=redir)
 
 #actual verification of /google
@@ -84,7 +84,7 @@ def getId(idtoken):
             session['googleID']=jsondata
         return 'done'
     except:
-        return 'error'
+        return render_template('error.html', error='error')
 
 #semi-obsolete debugger
 @app.route('/gdebug')
@@ -107,7 +107,7 @@ def googleAcc(redir):
     if not redir:
         redir=request.args.get('redir')
     if not redir:
-        return "That's an error! Redirect was not specified in the URL, but that should have been caught. Sorry!"
+        return render_template('error.html', error="That's an error! Redirect was not specified in the URL, but that should have been caught. Sorry!")
     conn=sql.connect(host=SQLhost,user=SQLuser,password=SQLpassword,database=SQLdatabase)
     cur=conn.cursor()
     if 'googleID' in session:
@@ -119,9 +119,9 @@ def googleAcc(redir):
             googleResults=cur.fetchall()
             validToken = True
         else:
-            return "invalid token"
+            return render_template('error.html', error="invalid token")
     else:
-        return "You have not signed in with your Google account"
+        return render_template('error.html', error="You have not signed in with your Google account")
     try:
         session['id']=googleResults[0][2]
         #possibly not perfect but cba
@@ -141,7 +141,7 @@ def tokenAuth(redir):
     if not redir:
         redir=request.args.get('redir')
     if not redir:
-        return "Ok, I see what you did, user. Well it doesn't work."
+        return render_template('error.html', error="Ok, I see what you did, user. Well it doesn't work.")
     uuid=session['id']
     theTime=math.floor(time.time())+60
     json = {
@@ -170,9 +170,9 @@ def verify(redir,token):
     if not token:
         token=request.args.get('token')
     if not redir:
-        return "Error. Redir was not specified."
+        return render_template('error.html', error="Error. Redir was not specified.")
     if not token:
-        return "Error. Token was not specified."
+        return render_template('error.html', error="Error. Token was not specified.")
     #decryption
     key = {"k":JWTEncrptKey,"kty":"oct"}
     key = jwk.JWK(**key)
@@ -181,7 +181,7 @@ def verify(redir,token):
     claims=json.loads(ST.claims)
     theTime = math.floor(time.time())
     if theTime > claims["iat"] or not claims["name"]==JWTsecret or not claims["redir"]==redir:
-        return "The token is invalid"
+        return render_template('error.html', error="The token is invalid")
     else:
         return claims["sub"]
 
@@ -191,16 +191,16 @@ def signup(redir):
     if not redir:
         redir=request.args.get('redir')
     if not redir:
-        return "Redirect was not specified. I have no idea how this happened unless it was YOU, the user, that intentionally went here!"
+        return render_template('error.html', error="Redirect was not specified. I have no idea how this happened unless it was YOU, the user, that intentionally went here!")
     if not "googleID" in session:
-        return "Not sure if this error is on your behalf or mine, but it happened."
+        return render_template('error.html', error="Not sure if this error is on your behalf or mine, but it happened.")
     try:
         googID = session["googleID"]
         gID = json.loads(googID)
     except:
         return session["googleID"]
     if int(gID["expires"])<math.floor(time.time()):
-        return "The session is now invalid. Who says so? My code's safety measures say so!"
+        return render_template('error.html', error="The session is now invalid. Who says so? My code's safety measures say so!")
     GoogleID = gID["id"]
     conn=sql.connect(host=SQLhost,user=SQLuser,password=SQLpassword,database=SQLdatabase)
     cur=conn.cursor()
@@ -208,7 +208,7 @@ def signup(redir):
     results=cur.fetchall()
     try:
         if results[0][2]:
-            return "Nice try"
+            return render_template('error.html', error="Nice try")
     except:
         done = False
     while not done:
@@ -236,7 +236,7 @@ def spotify(redir):
     if not redir:
         redir=request.args.get('redir')
     if not redir:
-        return "That's an error"
+        return render_template('error.html', error="That's an error")
     return render_template('spotify.html')
 
 @app.route('/spotifyAuth', defaults={'code':None})
@@ -245,9 +245,12 @@ def spotifyAuth(code):
     if not code:
         code=request.args.get('code')
     if not code:
-        return "If you're trying to get an error 500, look somewhere else. I'm not THAT bad at coding!"
+        return render_template('error.html', error="If you're trying to get an error 500, look somewhere else. I'm not THAT bad at coding!")
     x = requests.post('https://accounts.spotify.com/api/token', data={"grant_type": "authorization_code","code": code, "redirect_uri": f"{siteURL}/spotifyAuth", "client_id": spotifyClient, "client_secret": spotifySecret, "ContentType:": "application/x-www-form-urlencoded"})
     return x.text
 
 if __name__=='__main__':
-    app.run()
+    try:
+        app.run()
+    except KeyboardInterrupt:
+        print("😳 UwU James fix the webhook bug")
