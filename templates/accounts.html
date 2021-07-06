@@ -1,54 +1,71 @@
-<!DOCTYPE html>
-<html lang="en">
-        <head>
-                <meta charset="utf-8" />
-                <meta
-                        name="viewport"
-                        content="width=device-width, initial-scale=0.86, maximum-scale=5.0, minimum-scale=0.86"/>
-                <title>Your Account</title>
+<html lang="en"><head>
+	<meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Account portal</title>
+	<link rel="icon" href="https://assertapp.net/media/logo.png">
+	<link rel="stylesheet" href="https://assertapp.net/media/style.css">
+</head>
+<body>
+	<style>
+		.service img{
+			position: absolute;
+			top: 50%;
+			transform: translateY(-50%);
+			-ms-transform: translateY(-50%);
+		}
+		li{
+			list-style: none;
+			position: relative;
+		}
+		.button{
+			margin-left: 40px;
+		}
+		.button:nth-child(3){
+			margin-left: 10px;
+		}
+	</style>
+	<main>
+		<header><h1>Account portal</h1></header>
+		<h2>Accounts</h2>
+		<br>
+		<section>
+			<ul class="service-list">
+				<li class="service-container">
+					<code class="service"><img src="https://assertapp.net/media/google.png" alt="Google Logo" height="30px"></code>
+					{% if google %}
+						<a class="button" style="display: revert;" href="remove/google">Remove</a>
+						<a href="change/" style="display: revert;" class="button">Change</a>
+					{% endif %}
+					{% if not google %}
+						<a href="link" style="display: revert;" class="button">Link</a>
+					{% endif %}
+				</li>
+				<br>
+				<li class="service-container">
+					<code class="service"><img src="https://assertapp.net/media/spotify.png" alt="Spotify Logo" height="30px"></code>
+					{% if spotify %}
+						<a class="button" style="display: revert;" href="remove/spotify">Remove</a>
+						<a href="change/" style="display: revert;" class="button">Change</a>
+					{% endif %}
+					{% if not spotify %}
+						<a href="link" style="display: revert;" class="button">Link</a>
+					{% endif %}
+				</li>
+				<br>
+				<li class="service-container">
+					<code class="service"><img src="https://assertapp.net/media/alles.png" alt="Alles Logo" height="30px"></code>
+					{% if identity %}
+						<a class="button" style="display: revert;" href="remove/identity">Remove</a>
+						<a href="change/" style="display: revert;" class="button">Change</a>
+					{% endif %}
+					{% if not identity %}
+						<a href="link" style="display: revert;" class="button">Link</a>
+					{% endif %}
+				</li>
+			</ul>
+			<br>
+			<a href="delete/account" class="button">Delete account</a>
+		</section>
+	</main>
 
-                <link rel="icon" href="/media/logo.png" />
-                <meta property="og:type" content="website" />
-                <meta property="og:url" content="{{siteurl}}/" />
-                <meta property="og:title" content="Assert" />
-                <meta property="og:description" content="A quick signin provider" />
-                <link rel="icon" href="/media/logo.png" />
-                <link rel="stylesheet" href="https://assertapp.net/media/style.css" />
-        </head>
-        <body>
-                <main>
-                        <h1>Your Account</h1>
-                        <nav>
-                                <div>
-                                        <img src="https://assertapp.net/media/google.png" alt="Google Logo" width="30px">
-                                        {% if google %}
-                                                <a href="delete/google" class="button" style="display: revert"> Remove </a>
-                                                <a href="change/google" class="button" style="display: revert"> Change </a>
-                                        {% endif %}
-                                        {% if not google %}
-                                                <a href="add/google" class="button" style="display: revert"> Add account </a>
-                                        {% endif %}
-                                        <br>
-                                        <br>
-                                        <img src="https://assertapp.net/media/spotify.png" alt="Spotify Logo" width="30px">
-                                        {% if spotify %}
-                                                <a href="delete/spotify" class="button" style="display: revert"> Remove </a>
-                                                <a href="change/spotify" class="button" style="display: revert"> Change </a>
-                                        {% endif %}
-                                        {% if not spotify %}
-                                                <a href="add/spotify" class="button" style="display: revert"> Add account </a>
-                                        {% endif %}
-                                        <br>
-                                        <img src="https://assertapp.net/media/alles.png" alt="Alles Logo" width="30px">
-                                        {% if identity %}
-                                                <a href="delete/identity" class="button" style="display: revert"> Remove </a>
-                                                <a href="change/identity" class="button" style="display: revert"> Change </a>
-                                        {% endif %}
-                                        {% if not identity %}
-                                                <a href="add/identity" class="button" style="display: revert"> Add account </a>
-                                        {% endif %}
-                                </div>
-                        </nav>
-                </main>
-        </body>
-</html>
+</body></html>
